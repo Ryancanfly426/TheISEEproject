@@ -20,5 +20,120 @@
 <script>
 const words=[{w:'reluctant',m:'不情願的；勉強的'},{w:'abundant',m:'大量的；豐富的'},{w:'infer',m:'推論；推斷'},{w:'precise',m:'精確的；準確的'},{w:'subtle',m:'微妙的；不易察覺的'}];let wi=0,shown=true;const $=id=>document.getElementById(id);function renderWord(){$('word').textContent=words[wi].w;$('meaning').textContent=shown?words[wi].m:'點一下顯示答案'}function progress(){let n=Number(localStorage.getItem('iseeDays')||0);$('days').textContent=`${n} / 84`;$('progress').style.width=`${Math.min(100,n/84*100)}%`}function quiz(){const q=[{w:'abundant',opts:['plentiful','careless','brief','ordinary'],a:0},{w:'infer',opts:['to predict exactly','to conclude from clues','to disagree loudly','to copy word for word'],a:1},{w:'precise',opts:['exact','ancient','uncertain','generous'],a:0},{w:'reluctant',opts:['eager','unwilling','confused','proud'],a:1},{w:'subtle',opts:['easy to notice','very loud','delicate or not obvious','completely false'],a:2}];let item=q[Math.floor(Math.random()*q.length)];$('qword').textContent=`Choose the closest meaning of “${item.w}”.`;$('feedback').textContent='選一個答案，練習從英文定義直接理解。';$('choices').innerHTML='';item.opts.forEach((o,i)=>{let b=document.createElement('button');b.className='choice';b.textContent=o;b.onclick=()=>{document.querySelectorAll('.choice').forEach(x=>x.disabled=true);if(i===item.a){b.classList.add('correct');$('feedback').textContent='答對了！試著用這個字造句。'}else{b.classList.add('wrong');document.querySelectorAll('.choice')[item.a].classList.add('correct');$('feedback').textContent=`再記一次：${item.w} = ${item.opts[item.a]}.`}};$('choices').appendChild(b)})}$('flip').onclick=()=>{shown=!shown;renderWord()};$('next').onclick=()=>{wi=(wi+1)%words.length;shown=false;renderWord()};$('done').onclick=()=>{let n=Number(localStorage.getItem('iseeDays')||0);if(!localStorage.getItem('iseeDone-'+new Date().toDateString())){n=Math.min(84,n+1);localStorage.setItem('iseeDays',n);localStorage.setItem('iseeDone-'+new Date().toDateString(),'1');$('done').textContent='今天完成 ✓'}progress()};$('reset').onclick=()=>{if(confirm('要清除這個瀏覽器儲存的學習進度嗎？')){localStorage.removeItem('iseeDays');Object.keys(localStorage).filter(k=>k.startsWith('iseeDone-')).forEach(k=>localStorage.removeItem(k));$('done').textContent='完成今天學習';progress()}};renderWord();progress();quiz();
 </script>
-<script src="study.js"></script></body></html>
+<script>
+(()=>{
+const bank=[
+{w:'abandon',p:'v.',m:'放棄；遺棄',s:'give up',e:'They had to abandon the plan when the bridge closed.'},
+{w:'abundant',p:'adj.',m:'大量的；豐富的',s:'plentiful',e:'The island has abundant fresh water after the rainy season.'},
+{w:'accurate',p:'adj.',m:'準確的；正確的',s:'exact',e:'Check that the measurements are accurate before cutting the wood.'},
+{w:'acquire',p:'v.',m:'取得；習得',s:'obtain',e:'She hopes to acquire new skills during the summer program.'},
+{w:'adequate',p:'adj.',m:'足夠的；適當的',s:'sufficient',e:'One hour should be adequate to finish the assignment.'},
+{w:'adjacent',p:'adj.',m:'鄰近的；毗連的',s:'next to',e:'The science lab is adjacent to the library.'},
+{w:'alter',p:'v.',m:'改變；修改',s:'change',e:'We had to alter our route because of the storm.'},
+{w:'analyze',p:'v.',m:'分析',s:'examine',e:'The class will analyze the choices made by the main character.'},
+{w:'ancient',p:'adj.',m:'古代的；古老的',s:'very old',e:'The museum displayed an ancient bowl from China.'},
+{w:'anxious',p:'adj.',m:'焦慮的；擔心的',s:'worried',e:'He felt anxious before giving his first speech.'},
+{w:'apparent',p:'adj.',m:'明顯的；表面上的',s:'clear',e:'It became apparent that the team needed more practice.'},
+{w:'approach',p:'v./n.',m:'接近；方法',s:'come near',e:'As winter approached, the days grew shorter.'},
+{w:'attentive',p:'adj.',m:'專心的；留意的',s:'alert',e:'The attentive student noticed a small error on the map.'},
+{w:'attribute',p:'v./n.',m:'歸因於；特質',s:'ascribe',e:'The coach attributed the victory to the team’s steady effort.'},
+{w:'cautious',p:'adj.',m:'小心的；謹慎的',s:'careful',e:'Be cautious when crossing the wet rocks.'},
+{w:'cease',p:'v.',m:'停止；終止',s:'stop',e:'The rain ceased just before the game began.'},
+{w:'challenge',p:'n./v.',m:'挑戰；質疑',s:'test',e:'Learning to play the violin was a difficult challenge.'},
+{w:'coincide',p:'v.',m:'同時發生；相符',s:'happen together',e:'The school concert will coincide with the spring festival.'},
+{w:'collapse',p:'v./n.',m:'倒塌；崩潰',s:'fall down',e:'The old shed might collapse under the heavy snow.'},
+{w:'combine',p:'v.',m:'結合；合併',s:'join',e:'Combine the flour and water in a large bowl.'},
+{w:'commence',p:'v.',m:'開始；著手',s:'begin',e:'The ceremony will commence at nine o’clock.'},
+{w:'compel',p:'v.',m:'迫使；強使',s:'force',e:'The sudden thunder compelled us to go indoors.'},
+{w:'complex',p:'adj.',m:'複雜的',s:'complicated',e:'The puzzle looked simple but had a complex solution.'},
+{w:'conclude',p:'v.',m:'推斷；結束',s:'decide',e:'From the muddy shoes, we concluded that he had walked outside.'},
+{w:'confident',p:'adj.',m:'有信心的；確信的',s:'sure',e:'After practicing, Mia felt confident about the audition.'},
+{w:'conflict',p:'n./v.',m:'衝突；抵觸',s:'disagreement',e:'A conflict arose when both groups wanted to use the room.'},
+{w:'consequence',p:'n.',m:'結果；後果',s:'result',e:'One consequence of missing the bus was arriving late.'},
+{w:'constant',p:'adj.',m:'持續的；不斷的',s:'continuous',e:'The constant noise made it hard to concentrate.'},
+{w:'contrast',p:'n./v.',m:'對比；形成對照',s:'difference',e:'The bright flowers contrast with the dark leaves.'},
+{w:'contribute',p:'v.',m:'貢獻；促成',s:'give',e:'Each student will contribute one idea to the project.'},
+{w:'convince',p:'v.',m:'說服；使相信',s:'persuade',e:'He tried to convince his sister to join the club.'},
+{w:'crucial',p:'adj.',m:'關鍵的；極重要的',s:'essential',e:'Clear communication is crucial during the rescue.'},
+{w:'decline',p:'v./n.',m:'下降；婉拒',s:'decrease',e:'The number of visitors began to decline in winter.'},
+{w:'definite',p:'adj.',m:'明確的；確定的',s:'certain',e:'We need a definite answer by Friday.'},
+{w:'delicate',p:'adj.',m:'易碎的；精巧的',s:'fragile',e:'Handle the delicate glass ornament with care.'},
+{w:'demonstrate',p:'v.',m:'示範；證明',s:'show',e:'The teacher will demonstrate how to use the compass.'},
+{w:'depart',p:'v.',m:'離開；出發',s:'leave',e:'The train will depart from platform four.'},
+{w:'detect',p:'v.',m:'察覺；發現',s:'notice',e:'The device can detect smoke in the air.'},
+{w:'determine',p:'v.',m:'決定；查明',s:'find out',e:'The map helped them determine their location.'},
+{w:'distinct',p:'adj.',m:'明顯不同的；清楚的',s:'different',e:'The twins have distinct styles of painting.'},
+{w:'distribute',p:'v.',m:'分發；分配',s:'hand out',e:'Volunteers will distribute food to the families.'},
+{w:'diverse',p:'adj.',m:'多樣的；不同的',s:'varied',e:'The park is home to a diverse group of birds.'},
+{w:'emerge',p:'v.',m:'出現；浮現',s:'appear',e:'A path emerged from the trees and led to the lake.'},
+{w:'emphasize',p:'v.',m:'強調',s:'stress',e:'The guide emphasized the importance of staying together.'},
+{w:'encounter',p:'v./n.',m:'遇到；遭遇',s:'meet',e:'We may encounter strong winds on the mountain.'},
+{w:'enormous',p:'adj.',m:'巨大的；極大的',s:'huge',e:'An enormous wave rolled toward the shore.'},
+{w:'establish',p:'v.',m:'建立；確立',s:'set up',e:'The town established a library more than a century ago.'},
+{w:'evident',p:'adj.',m:'明顯的；可見的',s:'obvious',e:'Her excitement was evident from her wide smile.'},
+{w:'expand',p:'v.',m:'擴大；擴展',s:'enlarge',e:'The garden will expand next year.'},
+{w:'frequent',p:'adj.',m:'常常發生的；頻繁的',s:'often',e:'Frequent practice helped the band improve.'},
+{w:'generous',p:'adj.',m:'慷慨的；大方的',s:'giving',e:'Our neighbor was generous with her time and advice.'},
+{w:'genuine',p:'adj.',m:'真正的；真誠的',s:'real',e:'His apology sounded genuine.'},
+{w:'hostile',p:'adj.',m:'有敵意的；不友善的',s:'unfriendly',e:'The audience was not hostile; they were simply quiet.'},
+{w:'identify',p:'v.',m:'辨認；確認',s:'recognize',e:'Can you identify the bird by its song?'},
+{w:'imitate',p:'v.',m:'模仿',s:'copy',e:'Young children often imitate the adults around them.'},
+{w:'indicate',p:'v.',m:'指出；顯示',s:'show',e:'Dark clouds may indicate that rain is coming.'},
+{w:'inevitable',p:'adj.',m:'不可避免的',s:'unavoidable',e:'Some mistakes are inevitable when learning something new.'},
+{w:'interpret',p:'v.',m:'解釋；理解',s:'explain',e:'Readers may interpret the poem in different ways.'},
+{w:'maintain',p:'v.',m:'維持；保養',s:'keep',e:'It takes effort to maintain a healthy garden.'},
+{w:'observe',p:'v.',m:'觀察；遵守',s:'watch',e:'We observed the moon through a telescope.'},
+{w:'obtain',p:'v.',m:'取得；獲得',s:'get',e:'She obtained permission to interview the artist.'},
+{w:'occur',p:'v.',m:'發生；出現',s:'happen',e:'The event will occur after the final performance.'},
+{w:'peculiar',p:'adj.',m:'奇怪的；獨特的',s:'strange',e:'A peculiar smell came from the empty box.'},
+{w:'persuade',p:'v.',m:'說服',s:'convince',e:'They persuaded the principal to extend library hours.'},
+{w:'precise',p:'adj.',m:'精確的；準確的',s:'exact',e:'Please give precise directions to the campsite.'},
+{w:'predict',p:'v.',m:'預測；預言',s:'forecast',e:'It is difficult to predict the weather far ahead.'},
+{w:'preserve',p:'v.',m:'保存；保護',s:'protect',e:'The group works to preserve the historic building.'},
+{w:'previous',p:'adj.',m:'先前的；以前的',s:'earlier',e:'Use the previous page to check your answer.'},
+{w:'reluctant',p:'adj.',m:'不情願的；勉強的',s:'unwilling',e:'Nora was reluctant to speak before such a large crowd.'},
+{w:'scarce',p:'adj.',m:'稀少的；不足的',s:'limited',e:'Clean water became scarce during the drought.'},
+{w:'significant',p:'adj.',m:'重要的；顯著的',s:'important',e:'The discovery was a significant step in the research.'},
+{w:'similar',p:'adj.',m:'相似的；類似的',s:'alike',e:'The two stories have similar endings.'},
+{w:'subtle',p:'adj.',m:'微妙的；不易察覺的',s:'faint',e:'There was a subtle change in her tone.'},
+{w:'temporary',p:'adj.',m:'暫時的；短期的',s:'brief',e:'The bridge is closed for temporary repairs.'},
+{w:'transform',p:'v.',m:'使改變；轉變',s:'change completely',e:'A little paint can transform the old room.'},
+{w:'vast',p:'adj.',m:'廣闊的；巨大的',s:'immense',e:'They crossed a vast field before reaching the forest.'}
+,
+{w:'ambiguous',p:'adj.',m:'模稜兩可的；不明確的',s:'unclear',e:'The directions were ambiguous, so we asked for an example.'},
+{w:'anticipate',p:'v.',m:'預期；預料',s:'expect',e:'We anticipate heavy traffic before the holiday.'},
+{w:'conceal',p:'v.',m:'隱藏；掩飾',s:'hide',e:'The bushes concealed the narrow path.'},
+{w:'considerable',p:'adj.',m:'相當大的；可觀的',s:'sizable',e:'The project required a considerable amount of time.'},
+{w:'convey',p:'v.',m:'傳達；表達',s:'communicate',e:'Her letter conveyed gratitude to the volunteers.'},
+{w:'diminish',p:'v.',m:'減少；減弱',s:'lessen',e:'The sound diminished as the train moved away.'},
+{w:'elaborate',p:'adj./v.',m:'精心設計的；詳細說明',s:'detailed',e:'The author gave an elaborate account of the expedition.'},
+{w:'fluctuate',p:'v.',m:'波動；起伏',s:'vary',e:'Temperatures fluctuate greatly in the desert.'},
+{w:'illustrate',p:'v.',m:'說明；舉例證明',s:'explain',e:'The diagram illustrates how the water cycle works.'},
+{w:'imply',p:'v.',m:'暗示；意味著',s:'suggest',e:'His silence did not imply that he agreed.'},
+{w:'obscure',p:'adj./v.',m:'晦澀的；使不清楚',s:'uncertain',e:'A thick fog obscured the view of the harbor.'},
+{w:'restore',p:'v.',m:'修復；恢復',s:'repair',e:'Workers restored the damaged painting.'},
+{w:'restrain',p:'v.',m:'抑制；克制',s:'control',e:'She tried to restrain her laughter during the speech.'},
+{w:'rigid',p:'adj.',m:'僵硬的；嚴格固定的',s:'inflexible',e:'The rigid schedule left no time for changes.'},
+{w:'substantial',p:'adj.',m:'大量的；重大的',s:'significant',e:'The team made substantial progress this month.'},
+{w:'tentative',p:'adj.',m:'暫定的；不確定的',s:'provisional',e:'They made a tentative plan to meet on Saturday.'},
+{w:'thrive',p:'v.',m:'茁壯成長；興旺',s:'prosper',e:'Many plants thrive in warm, sunny places.'},
+{w:'tranquil',p:'adj.',m:'平靜的；安寧的',s:'peaceful',e:'We spent a tranquil afternoon beside the lake.'},
+{w:'withstand',p:'v.',m:'承受；抵擋',s:'resist',e:'The bridge was built to withstand strong winds.'},
+{w:'weary',p:'adj.',m:'疲倦的；厭倦的',s:'tired',e:'The weary hikers rested beneath a tree.'}];
+const $=id=>document.getElementById(id);
+bank.forEach((x,i)=>x.level=Math.floor(i/24)+1);
+const levelTitles=['','第 1 階｜認同義字','第 2 階｜辨句中詞義','第 3 階｜句子填空','第 4 階｜語境細節'];
+let wi=0,revealed=false,level=1,session=[],qIndex=0,score=0,answered=0;
+const shuffle=a=>{for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a};
+function renderCard(){const x=bank[wi];$('word').textContent=x.w;$('cardProgress').textContent=`${wi+1} / ${bank.length}｜${levelTitles[x.level]}`;$('meaning').textContent=revealed?`${x.p}｜${x.m}｜近義：${x.s}`:'先想意思，再翻卡';$('cardExample').textContent=revealed?`例句：${x.e}`:'';$('flip').textContent=revealed?'收回答案':'翻卡看答案'}
+function makeQuestions(n){const group=bank.filter(x=>x.level===n);return shuffle(group.map(x=>{const d=shuffle(group.filter(y=>y.w!==x.w&&y.s!==x.s));if(n===1)return {prompt:`Choose the closest synonym of “${x.w}”.`,answer:x.s,options:shuffle([x.s,...d.slice(0,3).map(y=>y.s)])};if(n===2)return {prompt:`What does “${x.w}” most nearly mean in this sentence? ${x.e}`,answer:x.m,options:shuffle([x.m,...shuffle(group.filter(y=>y.m!==x.m)).slice(0,3).map(y=>y.m)])};if(n===3){let sentence=x.e;const root=x.w.replace(/e$/,'');const forms=[x.w,root+'ed',root+'d',root+'s',root+'ing',x.w+'s',x.w+'ed',x.w.replace(/y$/,'ied')];for(const f of forms){const re=new RegExp('\\b'+f+'\\b','i');if(re.test(sentence)){sentence=sentence.replace(re,'_____');break}}return {prompt:`Choose the word that best completes the sentence: ${sentence}`,answer:x.w,options:shuffle([x.w,...d.slice(0,3).map(y=>y.w)])}}return {prompt:`In context, which choice best explains “${x.w}”? ${x.e}`,answer:x.s,options:shuffle([x.s,...d.slice(0,3).map(y=>y.s)])}}))}
+function unlocked(){return Number(localStorage.getItem('iseeUnlocked')||1)}
+function setupLevels(){[...$('quizLevel').options].forEach(o=>{const n=Number(o.value);o.disabled=n>unlocked();o.textContent=n>unlocked()?`第 ${n} 階（通過前一階解鎖）`:levelTitles[n]});$('quizLevel').value=String(level)}
+function startLevel(n){level=n;session=makeQuestions(n);qIndex=0;score=0;answered=0;setupLevels();renderQuestion()}
+function renderQuestion(){const item=session[qIndex];$('quizStageName').textContent=`${levelTitles[level]}｜共 24 題，答對 18 題解鎖下一階`;$('qword').textContent=`第 ${qIndex+1} / 24 題｜${item.prompt}`;$('scoreline').textContent=`答對 ${score} / 已答 ${answered}`;$('feedback').textContent='選出最適合的答案。';$('nextQuestion').textContent=qIndex===23?'完成本階':'下一題';$('choices').innerHTML='';item.options.forEach(value=>{const b=document.createElement('button');b.className='choice';b.textContent=value;b.onclick=()=>{document.querySelectorAll('#choices .choice').forEach(z=>z.disabled=true);answered++;if(value===item.answer){score++;b.classList.add('correct');const entry=bank.find(x=>x.w===item.answer);$('feedback').textContent=`答對！${entry?entry.w+'｜'+entry.m:item.answer}`}else{b.classList.add('wrong');[...document.querySelectorAll('#choices .choice')].find(z=>z.textContent===item.answer)?.classList.add('correct');const entry=bank.find(x=>x.w===item.answer);$('feedback').textContent=`答案：${item.answer}${entry?'｜'+entry.m:''}`}$('scoreline').textContent=`答對 ${score} / 已答 ${answered}`};$('choices').appendChild(b)})}
+function nextQuestion(){if(qIndex<23){qIndex++;renderQuestion();return}if(score>=18&&level<4){localStorage.setItem('iseeUnlocked',String(Math.max(unlocked(),level+1)));$('feedback').textContent=`本階 ${score}/24，已解鎖下一階。`;$('scoreline').textContent=`通過 ${score} / 24`;startLevel(level+1);return}if(score>=18){$('qword').textContent='完成全部四階！';$('choices').innerHTML='';$('feedback').textContent=`最終階答對 ${score}/24。96 張卡與四階練習完成。`;$('nextQuestion').textContent='重新練第 4 階';$('nextQuestion').onclick=()=>startLevel(4);return}$('qword').textContent=`第 ${level} 階尚未通過`;$('choices').innerHTML='';$('feedback').textContent=`答對 ${score}/24；至少答對 18 題才能解鎖下一階。再練一次本階。`;$('scoreline').textContent=`未通過 ${score} / 24`;$('nextQuestion').textContent='重練本階';$('nextQuestion').onclick=()=>startLevel(level)}
+$('flip').onclick=()=>{revealed=!revealed;renderCard()};$('previous').onclick=()=>{wi=(wi+bank.length-1)%bank.length;revealed=false;renderCard()};$('next').onclick=()=>{wi=(wi+1)%bank.length;revealed=false;renderCard()};$('quizLevel').onchange=e=>startLevel(Number(e.target.value));$('nextQuestion').onclick=nextQuestion;
+renderCard();startLevel(1);
+})();
+</script></body></html>
 
