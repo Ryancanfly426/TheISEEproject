@@ -1,10 +1,8 @@
 # ISEE Grade 8 Word Sprint
 
 - Live site: https://ryancanfly426.github.io/TheISEEproject/
-- Grade 8 applicants: ISEE Middle Level vocabulary practice.
-- 76 vocabulary words with part of speech, Traditional Chinese meaning, synonym, and example sentence.
-- 96 practice questions: 76 synonym questions and 20 sentence-completion questions.
-- Search the word bank; use flashcards and track daily study progress.
-
-Study progress is saved in the browser's localStorage.
+- 96 flashcards in four levels of 24 words, with part of speech, Traditional Chinese meaning, synonym, and example sentence.
+- Progressive practice: synonym recognition, meaning in context, sentence completion, then contextual nuance.
+- Pass each 24-question level with at least 18 correct answers to unlock the next.
+- Search and filter the flashcards by level. Daily progress is saved in browser localStorage.
 
